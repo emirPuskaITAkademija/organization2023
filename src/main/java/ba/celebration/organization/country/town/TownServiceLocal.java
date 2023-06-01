@@ -8,7 +8,11 @@ import java.util.List;
 public interface TownServiceLocal {
     void create(Town town);
 
+    void edit(Town town);
+
     void remove(Town town);
+
+    void remove(Long id);
 
     Town find(Object id);
 

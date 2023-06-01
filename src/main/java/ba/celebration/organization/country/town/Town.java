@@ -2,7 +2,10 @@ package ba.celebration.organization.country.town;
 
 import ba.celebration.organization.country.Country;
 import ba.celebration.organization.user.ejb.User;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
@@ -19,10 +22,13 @@ public class Town implements Serializable {
     @Size(max = 255)
     private String name;
 
+
+    @NotNull
     @JoinColumn(name = "id_country", referencedColumnName = "id")
     @ManyToOne
     private Country country;
 
+    @JsonbTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "town")
     private List<User> userList;
 

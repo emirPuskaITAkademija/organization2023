@@ -44,32 +44,33 @@ public class RegisterServlet extends HttpServlet {
         processRequest(req, resp);
     }
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String username = req.getParameter("username");
+        String username = request.getParameter("username");
         User user = userServiceLocal.findByUsername(username);
         if (user != null) {
-            req.setAttribute("message", "Username is already in use");
-            RequestDispatcher dispatcher = req.getRequestDispatcher(Routes.REGISTRATION);
-            dispatcher.forward(req, resp);
+            request.setAttribute("message", "Username is already in use");
+            RequestDispatcher dispatcher = request.getRequestDispatcher(Routes.REGISTRATION);
+            dispatcher.forward(request, response);
         }else{
-            char townId = req.getParameter("town").split("\\[")[1].charAt(0);
+            char townId = request.getParameter("town").split("\\[")[1].charAt(0);
             Long townIdNumber = Long.parseLong(townId+"");
             Town town = townServiceLocal.find(townIdNumber);
             User newUser = new User();
             newUser.setTown(town);
             newUser.setUsername(username);
-            String hashedPassword = pbkdf2PasswordHash.generate(req.getParameter("password").toCharArray());
+            String plainPassword = request.getParameter("password");
+            String hashedPassword = pbkdf2PasswordHash.generate(plainPassword.toCharArray());
             newUser.setPassword(hashedPassword);
-            newUser.setName(req.getParameter("name"));
-            newUser.setSurname(req.getParameter("surname"));
-            newUser.setEmail(req.getParameter("email"));
-            newUser.setContact(req.getParameter("contact"));
+            newUser.setName(request.getParameter("name"));
+            newUser.setSurname(request.getParameter("surname"));
+            newUser.setEmail(request.getParameter("email"));
+            newUser.setContact(request.getParameter("contact"));
             newUser.setStatus(User.ACTIVE);
-            newUser.setPrivilege(privilegeServiceLocal.find(Privilege.CLIENT_PRIVILEGE));
+            newUser.setPrivilege(privilegeServiceLocal.find(Long.valueOf(3l)));
             userServiceLocal.create(newUser);
-            RequestDispatcher dispatcher = req.getRequestDispatcher(Routes.AUTH_LOGIN);
-            dispatcher.forward(req, resp);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(Routes.AUTH_LOGIN);
+            dispatcher.forward(request, response);
         }
     }
 }

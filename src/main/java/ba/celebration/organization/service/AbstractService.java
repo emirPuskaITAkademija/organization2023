@@ -31,6 +31,13 @@ public abstract class AbstractService<E>{
         entityManager.remove(entity);
     }
 
+    public void remove(Long id){
+        E entity = entityManager().find(entityClass, id);
+        if(entity!=null){
+            remove(entity);
+        }
+    }
+
     public E find(Object id){
         return entityManager().find(entityClass, id);
     }

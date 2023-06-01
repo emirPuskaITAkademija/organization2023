@@ -18,6 +18,8 @@ import java.io.IOException;
 @WebServlet(name = "authenticateServlet", urlPatterns = "/authenticate")
 public class AuthenticateServlet extends HttpServlet {
 
+    //rahima
+    //rahima123
     @Inject
     private UserServiceLocal userServiceLocal;
 
@@ -34,24 +36,26 @@ public class AuthenticateServlet extends HttpServlet {
         processRequest(req, resp);
     }
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
-        String usernameParam = req.getParameter("username");
-        String passwordParam = req.getParameter("password");
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String usernameParam = request.getParameter("username");
+        String plainPassword = request.getParameter("password");//PLAIN PASSWORD
         User user = userServiceLocal.findByUsername(usernameParam);
-        req.setAttribute("message", "");
-        if(user != null && pbkdf2PasswordHash.verify(passwordParam.toCharArray(), user.getPassword())){
-            HttpSession session = req.getSession();
+        String hashedPassword = user.getPassword();
+        request.setAttribute("message", "");
+        if(user != null && pbkdf2PasswordHash.verify(plainPassword.toCharArray(), hashedPassword)){
+            HttpSession session = request.getSession();
             User userFromSession =(User) session.getAttribute("session_user");
             if(userFromSession == null){
                 session.setAttribute("session_user", user);
             }
-            RequestDispatcher dispatcher = req.getRequestDispatcher(Routes.DASHBOARD_ACCES);
-            dispatcher.forward(req, resp);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(Routes.DASHBOARD_ACCES);
+            dispatcher.forward(request, response);
         }else{
             String message = "Neispravna kombinacija lozinke i korisničkog naloga";
-            req.setAttribute("message", message);
-            RequestDispatcher dispatcher = req.getRequestDispatcher(Routes.AUTH_LOGIN);
-            dispatcher.forward(req, resp);
+            request.setAttribute("message", message);
+            RequestDispatcher dispatcher = request.getRequestDispatcher(Routes.AUTH_LOGIN);
+            dispatcher.forward(request, response);
         }
     }
+
 }

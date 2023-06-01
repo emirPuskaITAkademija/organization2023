@@ -1,6 +1,7 @@
 package ba.celebration.organization.country;
 
 import ba.celebration.organization.country.town.Town;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 
@@ -18,6 +19,7 @@ public class Country implements Serializable {
     @Size(max = 255)
     private String name;
 
+    @JsonbTransient
     @OneToMany(mappedBy = "country")
     private List<Town> townList;
 
