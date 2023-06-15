@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Base64;
 
-@WebFilter(urlPatterns = {"/api/*", "/dashboard/*", "/hello-servlet"})
+@WebFilter(urlPatterns = { "/dashboard/*", "/hello-servlet", "/api/*"})
 public class AuthenticationFilter implements Filter {
 
     @Inject
@@ -26,6 +26,10 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) resp;
+        if(request.getMethod().equals("OPTIONS")){
+            chain.doFilter(request, response);
+            return;
+        }
         String authorizationHeader = request.getHeader("Authorization");
         //ivica:ivica123  -> encoder -> aXZpY2E6aXZpY2ExMjM=
         //aXZpY2E6aXZpY2ExMjM=  -> decode -> ivica:ivica123

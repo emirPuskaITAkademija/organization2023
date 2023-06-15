@@ -17,4 +17,8 @@ public interface TownServiceLocal {
     Town find(Object id);
 
     List<Town> findAll();
+
+    List<Town> findPage(int page, int pageSize);
+
+    int count();
 }

@@ -1,6 +1,7 @@
 package ba.celebration.organization.country.town.rest;
 
 import ba.celebration.organization.country.town.Town;
+import ba.celebration.organization.country.town.TownPage;
 import ba.celebration.organization.country.town.TownServiceLocal;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -21,13 +22,19 @@ public class TownRestService {
 
     /**
      *  HTTP GET request
-     *  <p>http://localhost:8080/organization-1.0-SNAPSHOT/api/towns</p>
+     *  <p>http://localhost:8080/organization-1.0-SNAPSHOT/api/towns?page=1&pageSize=5</p>
      * @return response
      */
     @GET
-    public Response getAll(){
-        List<Town> townList = townServiceLocal.findAll();
-        return Response.ok(townList).build();
+    public Response getAll(@QueryParam("page") int page, @QueryParam("pageSize") int pageSize){
+        List<Town> townList = townServiceLocal.findPage(page, pageSize);
+        TownPage townPage = new TownPage();
+        townPage.setTowns(townList);
+        //totalPages
+        int totalItems = townServiceLocal.count();
+        int totalPages =(int) Math.ceil((double)totalItems/pageSize);//3.3 -> 4
+        townPage.setTotalPages(totalPages);
+        return Response.ok(townPage).build();
     }
 
     /**
